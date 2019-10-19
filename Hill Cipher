@@ -1,0 +1,105 @@
+hill Cipher.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <stdlib.h>
+#include <iostream>
+#include <iomanip>
+#include <math.h>
+#include <vector>
+#include <string>
+#include <sstream>      // std::stringstream
+#include<fstream>
+#include <algorithm>    // std::transform
+#include <functional>   // std::plus
+
+
+using namespace std;
+vector<int> Multiply_matrices(vector<vector<int>> key, vector<int> block)
+{
+	vector<int> result;
+	int sum = 0  , result_index =0;
+	for (int i = 0; i < key.size(); i++)
+	{
+		
+		for (int j = 0; j < block.size(); j++)
+		{
+			sum = sum + key[i][j] * block[j];
+		}
+		result.push_back( sum % 26);
+		result_index++;
+		sum = 0;
+	}	
+
+	return result;
+
+}
+/*Hill Cipher*/
+
+int main()
+{
+    //Take Length of key
+	int length;
+	cin >> length;
+	// get size of square matrix
+	int Matrix_size = sqrt(length);
+	vector<int> key_value(length);
+	for (int i = 0; i < length; i++)
+	{
+		cin >> key_value[i];
+	}
+	
+	
+	//Create Square Matrix
+	vector<int> v(Matrix_size);
+	vector<vector<int>> Key(Matrix_size, v);
+
+	int key_counter = 0; //Counter for take each key and put it into the matrix 
+
+	//Update Square Matrix With Keys 
+	for (int i = 0; i < Matrix_size; i++)
+	{
+		for (int j = 0; j < Matrix_size; j++)
+		{
+			Key[i][j] = key_value[key_counter] % 26; // to make each key of char between 0 to 25 ;
+			key_counter++;
+			
+		}
+	}
+	string plaintext , ciphertext;
+	cin.ignore();
+	getline(std::cin, plaintext);
+	//add X If String is shorter for blocks 
+	while (plaintext.length() % Matrix_size != 0)
+	{
+		plaintext.push_back('X');
+	}
+
+	//int Num_of_block = plaintext.length() / Matrix_size;
+	vector<int> block(Matrix_size);
+	//vector<vector<int>> Block(Matrix_size, vector<int>(Num_of_block));
+	int block_elements=0;
+
+	for (int i = 0; i < plaintext.length(); i++)
+	{
+		//All Inputs are capital
+		plaintext[i] =plaintext[i]- 65;
+		block[block_elements]=plaintext[i];
+		block_elements++;
+		
+		if (block_elements == Matrix_size)
+		{
+			block_elements = 0;
+			//Multiply matrix with vector 
+			vector<int> result(Matrix_size);
+			result = Multiply_matrices(Key, block);
+			for (int i = 0; i < result.size(); i++)
+			{
+				ciphertext.push_back(result[i]+65);
+			}
+			
+		}
+	
+
+	cout << ciphertext;
+
+}
