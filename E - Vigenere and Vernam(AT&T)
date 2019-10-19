@@ -1,0 +1,102 @@
+#include <stdlib.h>
+#include <iostream>
+#include <iomanip>
+#include <math.h>
+#include <vector>
+#include <string>
+#include <sstream>      // std::stringstream
+#include<fstream>
+#include <algorithm>    // std::transform
+#include <functional> 
+
+
+
+string Vigener_Cipher(string plaintext, string key)
+{
+	int key_index = 0;
+	string Vigenere_cipher = plaintext;
+	for (int i = 0; i < plaintext.length(); i++)
+	{
+		plaintext[i] = (plaintext[i] + key[key_index]) % 26 + 65;
+		Vigenere_cipher[i] = (plaintext[i]);
+		key_index++;
+		if (key_index == key.length())
+		{
+			key_index = 0;
+		}
+	}
+	return Vigenere_cipher;
+}
+
+int One_Time_Pad(string plaintext, string key)
+{
+	if (key.length() >= plaintext.length())
+	{
+		return 1;
+	}
+	else
+		return 0;
+
+}
+
+string Vernam_cipher(string plaintext, string key)
+{
+	int key_index = 0;
+	stringstream ss;
+	for (int i = 0; i < plaintext.length(); i++)
+	{
+		
+		unsigned int  num = plaintext[i] - 0;
+		unsigned int num2 = key[key_index] - 0;
+		unsigned int num3 = num ^ num2;
+		if (num3 >= 0 && num3 <= 15)
+		{
+			ss << hex << 0;
+		}
+		if (num3 >= 'a' && num3 <= 'z')
+		{
+			num3 = num3 - 97 + 65;
+		}
+		ss << hex << num3;
+
+		key_index++;
+		if (key_index == key.length())
+		{
+			key_index = 0;
+		}
+	}
+	string Vernam_cipher(ss.str());
+	transform(Vernam_cipher.begin(), Vernam_cipher.end(),Vernam_cipher.begin(), ::toupper) ;
+	return Vernam_cipher;
+
+}
+
+
+int main()
+{
+	
+	string key, plaintext, Vigenere_cipher;
+	getline(cin, key);
+	getline(cin, plaintext);
+	Vigenere_cipher = plaintext;
+	int key_index = 0;
+
+	Vigenere_cipher = Vigener_Cipher(plaintext, key);
+	cout << "Vigenere: " << Vigenere_cipher << endl;
+
+	string vernam_cipher = Vernam_cipher(plaintext, key);
+	cout << "Vernam: " << vernam_cipher << endl;
+
+
+
+	if (One_Time_Pad(plaintext, key))
+	{
+		cout << "One-Time Pad: YES";
+	}
+	else
+	{
+		cout << "One-Time Pad: NO";
+	}
+
+
+}
