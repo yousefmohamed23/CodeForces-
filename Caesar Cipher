@@ -1,0 +1,44 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+#include <vector>
+ 
+using namespace std;
+ 
+string ceaser(string plaintext, unsigned long long int key)
+{
+	//unsigned long int Real_key = key % 26;
+	string ciphertext = plaintext; 
+	for (int i = 0; i < plaintext.length(); i++)
+	{
+		if (plaintext[i] >= 65 && plaintext[i] <= 90)
+		{
+			
+			ciphertext[i] = ((plaintext[i] - 65 + key) % 26) + 65;
+			
+		}
+	}
+ 
+		
+	return ciphertext;
+}
+//A=65   z=90
+ 
+ 
+ 
+int main()
+{
+	unsigned long long int key;
+	cin >> key;
+	
+ 
+	string plaintext , ciphertext;
+	cin.ignore();
+	getline(cin, plaintext);
+ 
+	ciphertext = ceaser(plaintext, key);
+	cout<<ciphertext;
+	
+	return 0;
+ 
+}
