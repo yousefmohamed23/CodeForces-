@@ -1,0 +1,156 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include<algorithm>
+using namespace std;
+ 
+ 
+vector<int> row_num(9);
+vector<int> col_num(9);
+ 
+ 
+ 
+string PlayFair_cipher(string plaintext, vector<vector<int>> key_matrix)
+{
+	unsigned int plaintext_index = 0;
+	string cipher;
+	for (int i = 0; i < plaintext.length(); i++)
+	{
+		unsigned char char1 = plaintext[i];
+		unsigned char char2 = plaintext[++i];
+ 
+		if (row_num[char1 - 65] != row_num[char2 - 65] && col_num[char1 - 65] != col_num[char2 - 65])
+		{
+			char x = key_matrix[row_num[char1 - 65]][col_num[char2 - 65]];
+			char y = key_matrix[row_num[char2 - 65]][col_num[char1 - 65]];
+			cipher.push_back(x);
+			cipher.push_back(y);
+		}
+		else if (row_num[char1 - 65] == row_num[char2 - 65])
+		{
+			int temp1 = 0;
+			temp1 = col_num[char1 - 65];
+			temp1++;
+			if (temp1 > 2)
+			{
+				temp1 = 0;
+			}
+			char x = key_matrix[row_num[char1 - 65]][temp1];
+			int temp2 = 0;
+			temp2 = col_num[char2 - 65];
+			temp2++;
+			if (temp2 > 2)
+			{
+				temp2 = 0;
+			}
+			char y = key_matrix[row_num[char2 - 65]][temp2];
+			cipher.push_back(x);
+			cipher.push_back(y);
+		}
+		else if (col_num[char1 - 65] == col_num[char2 - 65])
+		{
+			int temp1 = 0;
+			temp1 = row_num[char1 - 65];
+			temp1++;
+			if (temp1 > 2)
+			{
+				temp1 = 0;
+			}
+			char x = key_matrix[temp1][col_num[char1 - 65]];
+			int temp2 = 0;
+			temp2 = row_num[char2 - 65];
+			temp2++;
+			if (temp2 > 2)
+			{
+				temp2 = 0;
+			}
+			char y = key_matrix[temp2][col_num[char2 - 65]];
+			cipher.push_back(x);
+			cipher.push_back(y);
+		}
+	}
+	return cipher;
+}
+ 
+ 
+int main()
+{
+	
+	string plaintext, ciphertext;
+	getline(cin, plaintext);
+	getline(cin, ciphertext);
+ 
+	string key = "ABCDEFGHI", real_key;
+	int  key_index = 0;
+	string cipher;
+	do
+	{
+ 
+		vector<vector<int>> Key_matrix(3, vector<int>(3));
+ 
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				//cout<<key[key_index];
+				Key_matrix[i][j] = key[key_index];
+ 
+				int x = key[key_index] - 65;
+ 
+				row_num[x] = i;
+ 
+				col_num[key[key_index] - 65] = j;
+				key_index++;
+				//cout << Key_matrix[i][j] <<"\t";
+			}
+			// cout << endl;
+		}
+		key_index = 0;
+ 
+		cipher = PlayFair_cipher(plaintext, Key_matrix);
+		row_num.clear();
+		row_num.clear();
+		real_key = key;
+		next_permutation(key.begin(), key.end());
+ 
+	} while (cipher != ciphertext);
+	
+ 
+	cout << real_key;
+	/*string key = "ABCDEFGIH", real_key;
+	next_permutation(key.begin(), key.end());
+ 
+	int  key_index = 0;
+	vector<vector<int>> Key_matrix(3, vector<int>(3));
+ 
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			Key_matrix[i][j] = key[key_index];
+			row_num[key[key_index] - 65] = i;
+			col_num[key[key_index] - 65] = j;
+			key_index++;
+			cout << Key_matrix[i][j] <<"\t";
+		}
+		cout << endl;
+	}
+	cout << "*********" << endl;
+	key_index = 0;
+	next_permutation(key.begin(), key.end());
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			cout << key[key_index]<<endl;
+			Key_matrix[i][j] = key[key_index];
+ 
+			row_num[key[key_index] - 65] = i;
+			col_num[key[key_index] - 65] = j;
+			key_index++;
+			cout << Key_matrix[i][j] << "\t";
+		}
+		cout << endl;
+	}*/
+}
+ 
