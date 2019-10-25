@@ -1,0 +1,217 @@
+#include <string>
+#include <iostream>
+#include <vector>
+#include<algorithm>
+using namespace std;
+ 
+vector<int> row_num(26);
+vector<int> col_num(26);
+ 
+vector<vector<int>>  Create_PlayFair_Key_Matrix(string key)
+{
+	vector<vector<int>> Key_matrix(5, vector<int>(5));
+	unsigned char alpha = 'A';
+	unsigned int key_index = 0;
+	unsigned int rest_alpha = 0;
+	vector<bool> enable_flag(26);
+	enable_flag['J' - 65] = true;
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			if (rest_alpha == 0)
+			{
+				if (key[key_index] == 'J')
+				{
+					key[key_index] = 'I';
+				}
+ 
+ 
+				//cout << Key_matrix[j][i]<<" ";
+				if (enable_flag[key[key_index] - 65] == false)
+				{
+					Key_matrix[i][j] = key[key_index];
+					row_num[key[key_index] - 65] = i;
+					col_num[key[key_index] - 65] = j;
+					enable_flag[key[key_index] - 65] = true;
+				}
+				else
+				{
+					j--;
+				}
+				key_index++;
+				if (key_index == key.length())
+				{
+					key_index = 0; // sfr al key 3a4an al condition yb2a true mra w7da bs 
+					rest_alpha = 1;
+					
+					continue;
+				}
+			}
+			if (rest_alpha == 1 && alpha <= 'Z')
+			{
+				
+				
+				while (enable_flag[alpha - 65] == true)
+				{
+					alpha++;
+				}
+				
+					
+				//when it is false
+				Key_matrix[i][j] = alpha;
+				row_num[alpha - 65] = i;
+				col_num[alpha - 65] = j;
+				//cout << Key_matrix[j][i] << " ";
+ 
+				enable_flag[alpha - 65] = true;
+				alpha++;
+				if (alpha == 'J')
+				{
+					alpha++;
+				}
+				
+			}
+			
+		}
+ 
+	}
+ 
+	return Key_matrix;
+ 
+}
+ 
+string PlayFair_cipher(string plaintext, vector<vector<int>> key_matrix)
+{
+	unsigned int plaintext_index = 0;
+	string cipher;
+	for (int i = 0; i < plaintext.length(); i++)
+	{
+		unsigned char char1 = plaintext[i];
+		unsigned char char2 = plaintext[++i];
+ 
+		if (row_num[char1 - 65] != row_num[char2 - 65] && col_num[char1 - 65] != col_num[char2 - 65])
+		{
+			char x = key_matrix[row_num[char1 - 65]] [col_num[char2 - 65]];
+			char y = key_matrix[row_num[char2 - 65]][col_num[char1 - 65]];
+			cipher.push_back(x);
+			cipher.push_back(y);
+		}
+		else if (row_num[char1 - 65] == row_num[char2 - 65])
+		{
+			int temp1=0;
+			temp1 = col_num[char1 - 65];
+			temp1++;
+			if (temp1 > 4)
+			{
+				temp1 = 0;
+			}
+			char x = key_matrix[row_num[char1 - 65]][temp1];
+			int temp2 = 0;
+			temp2 = col_num[char2 - 65];
+			temp2++;
+			if (temp2 > 4)
+			{
+					temp2 = 0;
+			}
+			char y = key_matrix[row_num[char2 - 65]][temp2];
+			cipher.push_back(x);
+			cipher.push_back(y);
+		}
+		else if (col_num[char1 - 65] == col_num[char2 - 65])
+		{
+			int temp1 = 0;
+			temp1 = row_num[char1 - 65];
+			temp1++;
+			if (temp1 > 4)
+			{
+				temp1 = 0;
+			}
+			char x = key_matrix[temp1][col_num[char1 - 65]];
+			int temp2 = 0;
+			temp2 = row_num[char2 - 65];
+			temp2++;
+			if (temp2 > 4)
+			{
+				temp2 = 0;
+			}
+			char y = key_matrix[temp2][col_num[char2 - 65]];
+			cipher.push_back(x);
+			cipher.push_back(y);
+		}
+	}
+	return cipher;
+}
+ 
+ 
+ 
+int main()
+{
+	
+	string key;
+	getline(cin, key);
+	string plaintext;
+	getline(cin, plaintext);
+	vector<vector<int>> Key_matrix(5, vector<int>(5));
+	Key_matrix = Create_PlayFair_Key_Matrix(key);
+	/*for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			cout << char(Key_matrix[i][j])<<"\t";
+		}
+		cout << endl;
+	}*/
+ 
+ 
+	for (int i = 0; i < plaintext.length(); i++)
+	{
+		if (plaintext[i] == 'J')
+		{
+			plaintext[i] = 'I';
+		}
+	}
+ 
+	for (int i = 0; i < plaintext.length(); i+=2)
+	{
+		
+		if (plaintext[i] == plaintext[i + 1] && plaintext[i] != 'X' && plaintext[i + 1] != 'X')
+		{
+			plaintext.insert(i + 1, "X");
+		}
+		if (plaintext[i] == plaintext[i + 1] && plaintext[i] == 'X' && plaintext[i + 1] == 'X')
+		{
+			plaintext.insert(i + 1, "Q");
+ 
+		}
+	}
+	
+ 
+	if (plaintext.length() % 2 != 0)
+	{
+		if (plaintext[plaintext.length() - 1] != 'X')
+		{
+			plaintext.push_back('X');
+		}
+		else
+		{
+			plaintext.push_back('Q');
+		}
+ 
+	}
+ 
+ 
+ 
+	//cout << endl << plaintext << endl;
+	/*for (int i = 0; i < 26; i++)
+	{
+		cout << row_num[i] << "\t" << col_num[i]<<endl;
+	}*/
+ 
+ 
+	string cipher = PlayFair_cipher(plaintext, Key_matrix);
+	//transform(cipher.begin(), cipher.end(), cipher.end(), ::toupper);
+	cout << cipher;
+	
+ 
+}
